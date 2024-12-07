@@ -4,18 +4,31 @@ $inputFile = "input.txt";
 
 // Define a function to parse a line into two integers
 function parseLine($line) {
+    // Define static so it's persisted between lines.
+    static $do = true;
+
     // Regex to match `mul(x,y)` with 1 to 3 digit numbers
-    $pattern = '/mul\(\d{1,3},\d{1,3}\)/';
+    $pattern = '/mul\(\d{1,3},\d{1,3}\)|do\(\)|don\'t\(\)/';
 
     // Use preg_match_all to find all matches
     $matches = [];
     if (preg_match_all($pattern, $line, $matchesResult)) {
         for ($i = 0; $i < count($matchesResult[0]); $i++) {
-            $commaPosition = strpos($matchesResult[0][$i], ',');
-            $leftNumber = substr($matchesResult[0][$i], 4, $commaPosition - 4);
-            $rightNumber = substr($matchesResult[0][$i], $commaPosition + 1, strlen($matchesResult[0][$i]) - ($commaPosition + 1) - 1);
-            print_r($matchesResult[0][$i] . ";" . $leftNumber . ";" . $rightNumber . PHP_EOL);
-            array_push($matches, [(int)$leftNumber, (int)$rightNumber]);
+            if ($matchesResult[0][$i] === "do()") {
+                print_r("do = true" . PHP_EOL);
+                $do = true;
+            }
+            else if ($matchesResult[0][$i] === "don't()") {
+                print_r("do = false" . PHP_EOL);
+                $do = false;
+            }
+            else if ($do === true) {
+                $commaPosition = strpos($matchesResult[0][$i], ',');
+                $leftNumber = substr($matchesResult[0][$i], 4, $commaPosition - 4);
+                $rightNumber = substr($matchesResult[0][$i], $commaPosition + 1, strlen($matchesResult[0][$i]) - ($commaPosition + 1) - 1);
+                print_r($matchesResult[0][$i] . ";" . $leftNumber . ";" . $rightNumber . PHP_EOL);
+                array_push($matches, [(int)$leftNumber, (int)$rightNumber]);
+            }
         }
     }
 
