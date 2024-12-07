@@ -52,7 +52,7 @@ $grid = [];
 if ($fileHandle) {
     // Read and print each line until end of file
     while (($line = fgets($fileHandle)) !== false) {
-        array_push($grid, $line);
+        array_push($grid, trim($line));
     }
 
     // Close the file handle
